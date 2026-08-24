@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deutsch Lernstudio 🐱</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f6f7fb; color: #222; }
+    .app { max-width: 900px; margin: 0 auto; padding: 28px 18px 60px; }
+    h1 { margin-bottom: 6px; }
+    .sub { color: #666; margin-top: 0; }
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 24px 0 18px; }
+    button { border: 0; border-radius: 12px; padding: 10px 15px; cursor: pointer; font-size: 15px; }
+    .tab { background: #e8e9ef; }
+    .tab.active { background: #222; color: white; }
+    .card { background: white; border-radius: 20px; padding: 24px; box-shadow: 0 8px 30px rgba(0,0,0,.06); }
+    .word { font-size: 36px; font-weight: 700; margin: 8px 0; }
+    .meta { color: #777; }
+    .meaning { font-size: 20px; margin: 18px 0; }
+    .example { background: #f4f5f8; border-radius: 14px; padding: 14px; margin-top: 14px; }
+    .actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+    .primary { background: #222; color: white; }
+    .secondary { background: #e9edf7; }
+    input, textarea, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; font-size: 15px; margin: 6px 0 12px; }
+    label { font-weight: 600; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
+    .stats { margin-top: 14px; color: #666; }
+  </style>
+</head>
+<body>
+<div class="app">
+  <h1>Deutsch Lernstudio 🐱</h1>
+  <p class="sub">单词 · 句子 · 动词变位</p>
+  <div class="tabs">
+    <button class="tab active" onclick="show('review', this)">复习</button>
+    <button class="tab" onclick="show('words', this)">单词</button>
+    <button class="tab" onclick="show('sentences', this)">句子</button>
+    <button class="tab" onclick="show('verbs', this)">变位</button>
+  </div>
+  <section id="review" class="card"></section>
+  <section id="words" class="card" hidden></section>
+  <section id="sentences" class="card" hidden></section>
+  <section id="verbs" class="card" hidden></section>
+</div>
+<script>
+const key='miaomiao-deutsch-data-v1';
+const starter={words:[{de:'sich entscheiden',type:'Verb',zh:'决定',ex:'Ich habe mich für Deutschland entschieden.'},{de:'die Erfahrung',type:'Nomen',zh:'经历；经验',ex:'Das war eine wichtige Erfahrung für mich.'},{de:'zuverlässig',type:'Adjektiv',zh:'可靠的',ex:'Er ist sehr zuverlässig.'}],sentences:[{de:'Ich bin der Meinung, dass ...',zh:'我认为……',note:'适合 B2/C1 口语表达观点。'},{de:'Das hängt davon ab, ob ...',zh:'这取决于是否……',note:'适合讨论条件和计划。'}],verbs:[{inf:'sein',meaning:'是',forms:['ich bin','du bist','er/sie/es ist','wir sind','ihr seid','sie/Sie sind']},{inf:'haben',meaning:'有',forms:['ich habe','du hast','er/sie/es hat','wir haben','ihr habt','sie/Sie haben']}]};
+let data=JSON.parse(localStorage.getItem(key)||'null')||starter,current=0;
+function save(){localStorage.setItem(key,JSON.stringify(data));}
+function show(id,btn){document.querySelectorAll('section').forEach(x=>x.hidden=true);document.getElementById(id).hidden=false;document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active');render();}
+function render(){renderReview();renderWords();renderSentences();renderVerbs();}
+function renderReview(){const w=data.words[current%data.words.length];document.getElementById('review').innerHTML=`<div class="meta">今日复习 · 单词</div><div class="word">${w.de}</div><div class="meta">${w.type}</div><div class="meaning">${w.zh}</div><div class="example">${w.ex}</div><div class="actions"><button class="secondary" onclick="speak('${esc(w.de)}')">🔊 听发音</button><button class="primary" onclick="nextCard()">下一个 →</button></div><div class="stats">词汇 ${data.words.length} · 句子 ${data.sentences.length} · 动词 ${data.verbs.length}</div>`;}
+function nextCard(){current=(current+1)%Math.max(data.words.length,1);renderReview();}
+function renderWords(){document.getElementById('words').innerHTML=`<h2>单词库</h2><div class="grid"><div><label>德语</label><input id="wd" placeholder="z.B. vermeiden"></div><div><label>中文</label><input id="wz" placeholder="避免"></div><div><label>词性</label><input id="wt" placeholder="Verb / Nomen / Adjektiv"></div></div><label>例句</label><input id="we" placeholder="Ich versuche, ..."><button class="primary" onclick="addWord()">＋ 添加单词</button><hr>${data.words.map((w,i)=>`<div class="example"><b>${w.de}</b> — ${w.zh}<br><span class="meta">${w.ex}</span> <button onclick="removeWord(${i})">删除</button></div>`).join('')}`;}
+function addWord(){let de=wd.value.trim(),zh=wz.value.trim();if(!de||!zh)return;data.words.push({de,zh,type:wt.value.trim()||'—',ex:we.value.trim()||'—'});save();render();}
+function removeWord(i){data.words.splice(i,1);save();render();}
+function renderSentences(){document.getElementById('sentences').innerHTML=`<h2>句子库</h2><label>德语句子</label><textarea id="sd" rows="2" placeholder="Ich bin der Meinung, dass ..."></textarea><label>中文意思</label><input id="sz" placeholder="我认为……"><label>备注</label><input id="sn" placeholder="什么时候用？固定搭配？"><button class="primary" onclick="addSentence()">＋ 添加句子</button><hr>${data.sentences.map((s,i)=>`<div class="example"><b>${s.de}</b><br>${s.zh}<br><span class="meta">${s.note||''}</span> <button onclick="removeSentence(${i})">删除</button></div>`).join('')}`;}
+function addSentence(){let de=sd.value.trim(),zh=sz.value.trim();if(!de||!zh)return;data.sentences.push({de,zh,note:sn.value.trim()});save();render();}
+function removeSentence(i){data.sentences.splice(i,1);save();render();}
+function renderVerbs(){document.getElementById('verbs').innerHTML=`<h2>动词变位</h2><label>原形</label><input id="vi" placeholder="gehen"><label>中文</label><input id="vz" placeholder="去"><div class="grid"><input id="v1" placeholder="ich ..."><input id="v2" placeholder="du ..."><input id="v3" placeholder="er/sie/es ..."><input id="v4" placeholder="wir ..."><input id="v5" placeholder="ihr ..."><input id="v6" placeholder="sie/Sie ..."></div><button class="primary" onclick="addVerb()">＋ 添加变位</button><hr>${data.verbs.map((v,i)=>`<div class="example"><b>${v.inf}</b> — ${v.meaning}<table>${v.forms.map((f,j)=>`<tr><td>${['ich','du','er/sie/es','wir','ihr','sie/Sie'][j]}</td><td>${f}</td></tr>`).join('')}</table><button onclick="removeVerb(${i})">删除</button></div>`).join('')}`;}
+function addVerb(){let inf=vi.value.trim(),meaning=vz.value.trim(),forms=[v1,v2,v3,v4,v5,v6].map(x=>x.value.trim());if(!inf||!meaning||forms.some(x=>!x))return;data.verbs.push({inf,meaning,forms});save();render();}
+function removeVerb(i){data.verbs.splice(i,1);save();render();}
+function speak(text){if('speechSynthesis'in window){let u=new SpeechSynthesisUtterance(text);u.lang='de-DE';speechSynthesis.speak(u);}}
+function esc(s){return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'");}
+render();
+</script>
+</body></html>
