@@ -18,11 +18,11 @@ const groups={
 ["⑭ Die besondere Begabung der Gesichtserkennung","teil1-gesichtserkennung-ar.html"]
 ],
 "Teil 2":[
-["① Wege der Migration - Ein persönliches Protokoll","teil2-v3-ar.html"],
-["② Wenn Unternehmen Personal abbauen","teil2-v3-ar.html"],
-["③ Selfies","teil2-v3-ar.html"],
+["① Wege der Migration - Ein persönliches Protokoll","teil2-v3-ar.html?item=1"],
+["② Wenn Unternehmen Personal abbauen","teil2-v3-ar.html?item=2"],
+["③ Selfies","teil2-v3-ar.html?item=3"],
 ["④ Bilinmeyen","teil2-bilinmeyen-ar.html"],
-["⑤ Smartwatches für Kinder","teil2-v3-ar.html"],
+["⑤ Smartwatches für Kinder","teil2-v3-ar.html?item=4"],
 ["⑥ Zwischen Familie und Studium oder Doppelbelastung im Studium","teil2-familie-studium-ar.html"],
 ["⑦ Träume: Botschaften aus dem Unterbewussten oder sinnlose Gehirnaktivität","teil2-traeume-ar.html"],
 ["⑧ Der Sinn und Unsinn / Schafft Wissenschaft immer Wissen","teil2-sinn-und-unsinn-ar.html"],
@@ -34,7 +34,7 @@ const groups={
 "Schreiben":[["✍️ Schreiben","schreiben-ar.html"]]
 };
 const tabs=document.getElementById("tabs"),sub=document.getElementById("subtabs"),viewer=document.getElementById("viewer");let current="";
-function openItem(url,button){document.querySelectorAll(".subtabs button").forEach(x=>x.classList.remove("active"));button.classList.add("active");let frame=Array.from(viewer.querySelectorAll("iframe")).find(x=>x.dataset.src===url);if(!frame){frame=document.createElement("iframe");frame.dataset.src=url;frame.src=url+"?v=20260923-static";frame.loading="eager";viewer.appendChild(frame)}document.querySelectorAll("#viewer iframe").forEach(x=>x.classList.remove("active"));frame.classList.add("active");window.scrollTo(0,0)}
+function openItem(url,button){document.querySelectorAll(".subtabs button").forEach(x=>x.classList.remove("active"));button.classList.add("active");let frame=Array.from(viewer.querySelectorAll("iframe")).find(x=>x.dataset.src===url);if(!frame){frame=document.createElement("iframe");frame.dataset.src=url;frame.src=url+(url.includes("?")?"&":"?")+"v=20260923-static";frame.loading="eager";viewer.appendChild(frame)}document.querySelectorAll("#viewer iframe").forEach(x=>x.classList.remove("active"));frame.classList.add("active");window.scrollTo(0,0)}
 function selectGroup(name,button){document.querySelectorAll("#tabs button").forEach(x=>x.classList.remove("active"));button.classList.add("active");current=name;sub.innerHTML="";groups[name].forEach((item,i)=>{const b=document.createElement("button");b.textContent=item[0];b.onclick=()=>openItem(item[1],b);sub.appendChild(b);if(i===0)openItem(item[1],b)});}
 Object.keys(groups).forEach((name,i)=>{const b=document.createElement("button");b.textContent=name;b.onclick=()=>selectGroup(name,b);tabs.appendChild(b);if(i===0)selectGroup(name,b)});
 </script></body></html>
