@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TELC C1 · النسخة العربية</title>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden}iframe{border:0;width:100%;height:100vh;display:block}</style>
+</head>
+<body>
+<iframe id="master" src="telcc1-master.html?v=20260923-ar" title="TELC C1"></iframe>
+<script>
+(function(){
+ const frame=document.getElementById('master');
+ const map=[
+  ['🇩🇪 TELC C1 · 备考资料','🇩🇪 TELC C1 · مواد التحضير للامتحان'],
+  ['Leseverstehen · Teil → 题目标题。原题、选项、答案、思路全部保留。新增题目只追加，不覆盖旧题。','Leseverstehen · الجزء → عنوان الموضوع. يتم الاحتفاظ بالنص الأصلي والخيارات والإجابات وشرح الحل. تُضاف الموضوعات الجديدة فقط ولا تُستبدل القديمة.'],
+  ['题目目录','فهرس الموضوعات'],
+  ['随机测试','اختبار عشوائي'],
+  ['以后添加。','سيتم الإضافة لاحقًا.'],
+  ['🎲 随机测试','🎲 اختبار عشوائي'],
+  ['从目前已收录的 Teil 1 五篇题目中随机抽取一个空格。选择后立即判断，并显示正确答案和背诵思路。','سيتم اختيار فراغ واحد عشوائيًا من الموضوعات الخمسة المسجلة حاليًا في الجزء الأول. بعد الاختيار ستظهر النتيجة فورًا مع الإجابة الصحيحة وشرح الحل.'],
+  ['🔀 换一道','🔀 اختر سؤالًا آخر'],
+  ['点击“换一道”开始。','اضغط على «اختر سؤالًا آخر» للبدء.'],
+  ['选择你认为最合适的句子：','اختر الجملة التي تراها الأنسب:'],
+  ['正确！','صحيح!'],
+  ['错误','خطأ'],
+  ['正确答案：','الإجابة الصحيحة:'],
+  ['🧠 背诵思路','🧠 طريقة تذكّر الحل'],
+  ['🧠 解析','🧠 شرح الحل'],
+  ['Lösung:','الحل:'],
+  ['题目','الموضوع'],
+  ['答案','الإجابة'],
+  ['思路','طريقة الحل'],
+  ['选项','الخيارات'],
+  ['加载失败','فشل التحميل'],
+  ['请刷新页面重试。','يرجى تحديث الصفحة والمحاولة مرة أخرى.'],
+  ['Teil 2 · 题目目录','الجزء الثاني · فهرس الموضوعات'],
+  ['Teil 3','الجزء الثالث'],
+  ['Teil 2','الجزء الثاني'],
+  ['Teil 1','الجزء الأول']
+ ];
+ function translate(root){
+   const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+   const nodes=[]; while(w.nextNode()) nodes.push(w.currentNode);
+   nodes.forEach(n=>{
+     let s=n.nodeValue;
+     for(const [a,b] of map) s=s.split(a).join(b);
+     n.nodeValue=s;
+   });
+   root.documentElement.lang='ar'; root.documentElement.dir='rtl';
+ }
+ function install(){
+   try{
+    const d=frame.contentDocument;
+    if(!d||!d.body){setTimeout(install,100);return}
+    translate(d);
+    const obs=new MutationObserver(()=>translate(d));
+    obs.observe(d.body,{childList:true,subtree:true,characterData:true});
+   }catch(e){setTimeout(install,200)}
+ }
+ frame.addEventListener('load',install); install();
+})();
+</script>
+</body>
+</html>
